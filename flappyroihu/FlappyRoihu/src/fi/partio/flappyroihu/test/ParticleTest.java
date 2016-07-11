@@ -22,8 +22,10 @@ public class ParticleTest extends BasicGame {
     /** The particle blending mode */
     private int mode = ParticleSystem.BLEND_COMBINE;
 
-    private float x = 0;
-    private float y = 0;
+    private SparkEmitter emitter;
+
+    private float x = 300;
+    private float y = 200;
 
     /**
      * Create a new test of graphics context rendering
@@ -37,10 +39,12 @@ public class ParticleTest extends BasicGame {
      */
     @Override
     public void init(GameContainer container) throws SlickException {
-	Image image = new Image("testdata/spark.png", true);
+	Image image = new Image("assets/spark.png", true);
 	system = new ParticleSystem(image);
+	emitter = new SparkEmitter(0, 0, 75, org.newdawn.slick.Color.red);
+	system.addEmitter(emitter);
 
-	system.addEmitter(new SparkEmitter(400, 300, 45, org.newdawn.slick.Color.blue));
+	system.setPosition(500, 500);
 	//system.addEmitter(new FireEmitter(200, 200, 10));
 	//	system.addEmitter(new FireEmitter(600, 300, 30));
 
@@ -52,12 +56,15 @@ public class ParticleTest extends BasicGame {
      */
     @Override
     public void render(GameContainer container, Graphics g) {
+	/*
 	for (int i = 0; i < 10; i++) {
-	    g.translate(1, 1);
-
-	    system.render();
+	    //g.translate(1, 1);
+	
+	  
 	}
 	g.resetTransform();
+	*/
+	system.render();
 	g.drawString("Press space to toggle blending mode", 200, 500);
 	g.drawString("Particle Count: " + (system.getParticleCount() * 100), 200, 520);
     }
@@ -69,7 +76,7 @@ public class ParticleTest extends BasicGame {
     public void update(GameContainer container, int delta) {
 	system.update(delta);
 	//x += 0.1;
-	//y += 0.1;
+	y += 0.08;
 	system.setPosition(x, y);
     }
 
@@ -84,6 +91,10 @@ public class ParticleTest extends BasicGame {
 	if (key == Input.KEY_SPACE) {
 	    mode = ParticleSystem.BLEND_ADDITIVE == mode ? ParticleSystem.BLEND_COMBINE : ParticleSystem.BLEND_ADDITIVE;
 	    system.setBlendingMode(mode);
+	}
+
+	if (key == Input.KEY_E) {
+
 	}
     }
 

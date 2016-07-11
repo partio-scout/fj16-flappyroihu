@@ -4,6 +4,8 @@ import java.util.Random;
 import java.util.Vector;
 import java.util.concurrent.ThreadLocalRandom;
 
+import org.apache.commons.configuration.Configuration;
+import org.apache.commons.configuration.PropertiesConfiguration;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.BasicGame;
 import org.newdawn.slick.Color;
@@ -19,25 +21,13 @@ import org.newdawn.slick.SlickException;
  */
 public class FlappyRoihu extends BasicGame {
 
-    /**
-     * Force fullscreen mode
-     */
-    public static final boolean FULLSCREEN = false;
+    public static Configuration CONFIG = getConfig();
 
     /**
-     * Use vertical sync? 
+     * Screen size
      */
-    public static final boolean VSYNC = false;
-
-    /**
-     * Screen width in px
-     */
-    public static final int WIDTH = 1900;
-
-    /**
-     * Screen height in px
-     */
-    public static final int HEIGHT = 1000;
+    public static int WIDTH = CONFIG.getInt("screen.width");
+    public static int HEIGHT = CONFIG.getInt("screen.height");
 
     /**
      * Relative speed by which player moves up and down. Descending speed is slower than ascending
@@ -47,15 +37,13 @@ public class FlappyRoihu extends BasicGame {
     /**
      * Relative speed by which targets (gates) move towards the player.
      */
-    public static float TARGET_SPEED = 0.1f;
+    public static float TARGET_SPEED = CONFIG.getFloat("target.speed");
 
     /**
      * Amount by which both player and target speed increase in each update cycle
      */
-    public static float SPEED_INCREASE = 0.00001f;
-
-    public static float BACKGROUND_HEIGHT = 750;
-    public static float BACKGROUND_PARLAX_FACTOR = 0.1f;
+    public static float TARGET_SPEED_INCREASE = CONFIG.getFloat("target.speedIncrease");
+    public static float PLAYER_SPEED_INCREASE = CONFIG.getFloat("player.speedIncrease");
 
     private boolean started = false;
 
@@ -77,6 +65,25 @@ public class FlappyRoihu extends BasicGame {
 	super("Flappy Roihu");
     }
 
+    /**
+     * Opens the default config file (flappyroihu.properties) in default directory
+     * and reads the config variables in the CONFIG -object
+     * @return
+     */
+    private static Configuration getConfig() {
+
+	try {
+	    Configuration config = new PropertiesConfiguration("flappyroihu.properties");
+	    return config;
+
+	} catch (Exception cex) {
+	    System.err.println("Error when opening or reading 'flappyroihu.properties'");
+	    cex.printStackTrace();
+	    System.exit(0);
+	    return null;
+	}
+    }
+
     @Override
     /**
      * Sets initial variables
@@ -84,13 +91,13 @@ public class FlappyRoihu extends BasicGame {
      */
     public void init(GameContainer container) throws SlickException {
 
-	background = new Background("assets/tausta.jpg");
+	background = new Background("assets/tausta2.jpg");
 
 	//System.out.println("BG-w:" + background.getWidth());
 	players = new Vector<>();
-	players.add(new Player(Color.red, 75, 500, Input.KEY_LSHIFT));
-	players.add(new Player(Color.green, 125, 500, Input.KEY_SPACE));
-	players.add(new Player(Color.yellow, 175, 500, Input.KEY_RSHIFT));
+	players.add(new Player(Color.red, 50, 200, Input.KEY_LSHIFT));
+	players.add(new Player(Color.green, 150, 100, Input.KEY_SPACE));
+	players.add(new Player(Color.yellow, 250, 300, Input.KEY_RSHIFT));
 	for (Player p : players)
 	    p.update(1);
 	targets = new Vector<>();
@@ -135,8 +142,8 @@ public class FlappyRoihu extends BasicGame {
 
 	background.update(delta);
 
-	TARGET_SPEED += SPEED_INCREASE;
-	PLAYER_SPEED += SPEED_INCREASE;
+	TARGET_SPEED += PLAYER_SPEED_INCREASE;
+	PLAYER_SPEED += TARGET_SPEED_INCREASE;
     }
 
     @Override
@@ -155,6 +162,12 @@ public class FlappyRoihu extends BasicGame {
 
 	if (key == Input.KEY_P)
 	    started = false;
+
+	if (key == Input.KEY_E) {
+	    for (Player p : players)
+		p.explode();
+	}
+
     }
 
     @Override
@@ -172,9 +185,9 @@ public class FlappyRoihu extends BasicGame {
 	try {
 	    AppGameContainer container = new AppGameContainer(new FlappyRoihu());
 	    container.setDisplayMode(WIDTH, HEIGHT, false);
-	    container.setFullscreen(FULLSCREEN);
+	    container.setFullscreen(CONFIG.getBoolean("screen.fulscreen"));
 	    container.setShowFPS(true);
-	    container.setVSync(VSYNC);
+	    container.setVSync(CONFIG.getBoolean("screen.vsync"));
 	    container.start();
 	} catch (SlickException e) {
 	    e.printStackTrace();
@@ -184,11 +197,11 @@ public class FlappyRoihu extends BasicGame {
     private void addTargets(float xLoc) {
 
 	int[] order = getShuffledArray(players.size());
-	float startH = HEIGHT / 2;
-	startH -= rnd.nextInt(HEIGHT / 6);
+	float startH = CONFIG.getFloat("target.height");
+	//startH -= rnd.nextInt(HEIGHT / 6);
 	for (int i = 0; i < players.size(); i++) {
 	    targets.addElement(new Target(players.get(order[i]), startH, xLoc + players.get(order[i]).getXLoc()));
-	    startH += targets.get(i).getSize() + 60;
+	    startH += targets.get(i).getSize() + 30;
 	}
     }
 
@@ -200,7 +213,12 @@ public class FlappyRoihu extends BasicGame {
 	return lastTargetX;
     }
 
-    private int[] getShuffledArray(int size) {
+    /**
+     * Returns array with numbers 0 - size in random order
+     * @param size
+     * @return
+     */
+    public static int[] getShuffledArray(int size) {
 
 	int[] ar = new int[size];
 	for (int i = 0; i < size; i++)

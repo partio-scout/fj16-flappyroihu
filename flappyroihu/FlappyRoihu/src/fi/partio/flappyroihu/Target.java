@@ -42,9 +42,11 @@ public class Target {
      */
     public void draw(Graphics g) {
 
+	/*
 	// If corresponding player is already dead, don't bother to draw
 	if (player.isDead())
 	    return;
+	*/
 
 	shape.setCenterX(xLoc);
 	g.setColor(player.getColor().darker(darkerFactor));
@@ -57,9 +59,11 @@ public class Target {
      */
     public void update(int delta) {
 
+	/*
 	// If corresponding player is already dead, don't bother to update
 	if (player.isDead())
 	    return;
+	*/
 
 	xLoc -= FlappyRoihu.TARGET_SPEED * delta;
 

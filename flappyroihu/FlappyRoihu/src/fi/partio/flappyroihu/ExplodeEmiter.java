@@ -8,19 +8,14 @@ import org.newdawn.slick.particles.Particle;
 import org.newdawn.slick.particles.ParticleEmitter;
 import org.newdawn.slick.particles.ParticleSystem;
 
-/**
- * A stock effect for fire usin the particle system
- *
- * @author kevin
- */
-public class SparkEmitter implements ParticleEmitter {
+public class ExplodeEmiter implements ParticleEmitter {
     /** The x coordinate of the center of the fire effect */
     private int x;
     /** The y coordinate of the center of the fire effect */
     private int y;
 
     /** The particle emission rate */
-    private int interval = 40;
+    private int interval = 1;
     /** Time til the next particle */
     private int timer;
     /** The size of the initial particles */
@@ -30,11 +25,14 @@ public class SparkEmitter implements ParticleEmitter {
 
     private Random rnd;
 
+    private boolean particlesCreated;
+
     /**
      * Create a default fire effect at 0,0
      */
-    public SparkEmitter() {
+    public ExplodeEmiter() {
 	rnd = new Random();
+	particlesCreated = false;
     }
 
     /**
@@ -43,7 +41,7 @@ public class SparkEmitter implements ParticleEmitter {
      * @param x The x coordinate of the fire effect
      * @param y The y coordinate of the fire effect
      */
-    public SparkEmitter(int x, int y) {
+    public ExplodeEmiter(int x, int y) {
 	this();
 	this.x = x;
 	this.y = y;
@@ -56,7 +54,7 @@ public class SparkEmitter implements ParticleEmitter {
      * @param y The y coordinate of the fire effect
      * @param size The size of the particle being pumped out
      */
-    public SparkEmitter(int x, int y, float size, Color color) {
+    public ExplodeEmiter(int x, int y, float size, Color color) {
 	this();
 	this.x = x;
 	this.y = y;
@@ -70,16 +68,21 @@ public class SparkEmitter implements ParticleEmitter {
     @Override
     public void update(ParticleSystem system, int delta) {
 	timer -= delta;
-	if (timer <= 0) {
-	    timer = interval;
-	    Particle p = system.getNewParticle(this, 2000);
-	    //p.setColor(1, 1, 1, 0.5f);
-	    p.setColor(color.r, color.g, color.b, color.a);
-	    p.setPosition(x, y);
-	    p.setSize(size);
-	    float vx = (-(rnd.nextFloat() * 0.25f));
-	    float vy = (float) rnd.nextGaussian() * 0.01f;
-	    p.setVelocity(vx, vy, 1.1f);
+	if (!particlesCreated) {
+	    for (int i = 0; i < 300; i++) {
+
+		timer = interval;
+		Particle p = system.getNewParticle(this, 2000);
+		//p.setColor(1, 1, 1, 0.5f);
+		p.setColor(color.r, color.g, color.b, color.a);
+		p.setPosition(x, y);
+		p.setSize(size);
+		float angle = rnd.nextFloat() * 2 * (float) Math.PI;
+		float vx = (float) Math.sin(angle) * 0.4f;
+		float vy = (float) Math.cos(angle) * 0.4f;
+		p.setVelocity(vx, vy, 1.1f);
+		particlesCreated = true;
+	    }
 	}
     }
 
@@ -91,11 +94,11 @@ public class SparkEmitter implements ParticleEmitter {
 	//if (particle.getSize() > 0)
 	//  particle.adjustSize(-0.06f * delta * (size / 40.0f));
 
-	particle.adjustSize(-0.05f * delta);
-	float dxadj = (float) (rnd.nextGaussian()) * 0.001f;
+	particle.adjustSize(-0.19f * delta);
+	float dxadj = (float) (rnd.nextGaussian()) * 0.05f;
 
-	float dyadj = (float) (rnd.nextGaussian()) * 0.001f;
-
+	float dyadj = (float) (rnd.nextGaussian()) * 0.05f;
+	dyadj += 0.01f; // make them fall a bit
 	particle.adjustVelocity(0, dyadj);
 
 	float c = 0.0007f * delta;
