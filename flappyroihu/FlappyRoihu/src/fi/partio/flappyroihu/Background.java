@@ -20,7 +20,7 @@ public class Background {
     private float bgWidth;
 
     private int tileCount = FlappyRoihu.CONFIG.getInt("background.tileCount");;
-    private int tileCycleCount = 5; // repeat all tiles 50 times. Should be enough for everyone
+    private int tileCycleCount = 50; // repeat all tiles 50 times. Should be enough for everyone
     private int tileBufferLength = tileCycleCount * tileCount;
 
     private BackgroundTile[] tileBuffer;

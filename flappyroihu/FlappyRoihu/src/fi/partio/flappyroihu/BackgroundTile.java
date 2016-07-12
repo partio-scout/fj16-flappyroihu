@@ -40,7 +40,7 @@ public class BackgroundTile {
 
 	// Coordinates for image are the center of the image, not top left corner
 	// so some calculation is needed...
-	tileImage.draw(xLoc, 0);
+	tileImage.draw((int) Math.floor(xLoc), 0);
     }
 
 }

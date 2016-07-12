@@ -1,5 +1,6 @@
 package fi.partio.flappyroihu;
 
+import java.util.List;
 import java.util.Random;
 import java.util.Vector;
 import java.util.concurrent.ThreadLocalRandom;
@@ -8,7 +9,6 @@ import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.BasicGame;
-import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
@@ -93,11 +93,21 @@ public class FlappyRoihu extends BasicGame {
 
 	background = new Background("assets/tausta2.jpg");
 
-	//System.out.println("BG-w:" + background.getWidth());
+	List<Object> playerNames = CONFIG.getList("game.players");
+
 	players = new Vector<>();
-	players.add(new Player(Color.red, 50, 200, Input.KEY_LSHIFT));
-	players.add(new Player(Color.green, 150, 100, Input.KEY_SPACE));
-	players.add(new Player(Color.yellow, 250, 300, Input.KEY_RSHIFT));
+
+	if (playerNames.size() == 3) {
+	    players.add(new Player(playerNames.get(0) + "", 1, CONFIG.getInt("player.pos1"), 200, Input.KEY_LSHIFT));
+	    players.add(new Player(playerNames.get(1) + "", 2, CONFIG.getInt("player.pos2"), 100, Input.KEY_SPACE));
+	    players.add(new Player(playerNames.get(2) + "", 3, CONFIG.getInt("player.pos3"), 300, Input.KEY_RSHIFT));
+	} else if (playerNames.size() == 2) {
+	    players.add(new Player(playerNames.get(0) + "", 1, CONFIG.getInt("player.pos1"), 200, Input.KEY_LSHIFT));
+	    players.add(new Player(playerNames.get(1) + "", 3, CONFIG.getInt("player.pos2"), 500, Input.KEY_RSHIFT));
+	} else if (playerNames.size() == 1) {
+	    players.add(new Player(playerNames.get(0) + "", 1, CONFIG.getInt("player.pos1"), 200, Input.KEY_LSHIFT));
+	}
+
 	for (Player p : players)
 	    p.update(1);
 	targets = new Vector<>();
@@ -186,7 +196,7 @@ public class FlappyRoihu extends BasicGame {
 	    AppGameContainer container = new AppGameContainer(new FlappyRoihu());
 	    container.setDisplayMode(WIDTH, HEIGHT, false);
 	    container.setFullscreen(CONFIG.getBoolean("screen.fulscreen"));
-	    container.setShowFPS(true);
+	    container.setShowFPS(CONFIG.getBoolean("screen.showFPS"));
 	    container.setVSync(CONFIG.getBoolean("screen.vsync"));
 	    container.start();
 	} catch (SlickException e) {

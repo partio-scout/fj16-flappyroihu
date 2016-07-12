@@ -71,9 +71,13 @@ public class Target {
 	    checkDone = true;
 	    if (!player.getShape().intersects(shape))
 		player.die();
-	    else
-		darkerFactor = -0.4f;
+	    else if (!player.isDead())
+		passGate();
 	}
+    }
+
+    public void passGate() {
+	darkerFactor = -0.4f;
     }
 
     /**

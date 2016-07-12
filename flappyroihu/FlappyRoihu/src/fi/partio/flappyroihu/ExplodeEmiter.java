@@ -69,10 +69,10 @@ public class ExplodeEmiter implements ParticleEmitter {
     public void update(ParticleSystem system, int delta) {
 	timer -= delta;
 	if (!particlesCreated) {
-	    for (int i = 0; i < 300; i++) {
+	    for (int i = 0; i < 200; i++) {
 
 		timer = interval;
-		Particle p = system.getNewParticle(this, 2000);
+		Particle p = system.getNewParticle(this, 5000);
 		//p.setColor(1, 1, 1, 0.5f);
 		p.setColor(color.r, color.g, color.b, color.a);
 		p.setPosition(x, y);
@@ -102,7 +102,7 @@ public class ExplodeEmiter implements ParticleEmitter {
 	particle.adjustVelocity(0, dyadj);
 
 	float c = 0.0007f * delta;
-	float a = -0.0002f * delta;
+	float a = -0.0003f * delta;
 	//particle.adjustColor(0, -c / 2, -c * 2, -c / 4);
 	particle.adjustColor(c, c, c, a);
 
