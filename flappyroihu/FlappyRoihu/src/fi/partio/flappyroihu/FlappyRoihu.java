@@ -91,7 +91,7 @@ public class FlappyRoihu extends BasicGame {
      */
     public void init(GameContainer container) throws SlickException {
 
-	background = new Background("assets/tausta2.jpg");
+	background = new Background("");
 
 	List<Object> playerNames = CONFIG.getList("game.players");
 
@@ -127,8 +127,9 @@ public class FlappyRoihu extends BasicGame {
 
 	for (Target t : targets)
 	    t.draw(g);
-	for (Player p : players)
-	    p.draw(g);
+	// Draw in reverse order, so the player that is at the left side of the screen is on top of others
+	for (int i = players.size(); i > 0; i--)
+	    players.get(i - 1).draw(g);
 	if (!started)
 	    g.drawString("PAUSED! PRESS ENTER TO START (P to pause again)", WIDTH / 3, HEIGHT / 2);
     }

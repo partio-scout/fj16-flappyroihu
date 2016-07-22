@@ -69,7 +69,7 @@ public class ExplodeEmiter implements ParticleEmitter {
     public void update(ParticleSystem system, int delta) {
 	timer -= delta;
 	if (!particlesCreated) {
-	    for (int i = 0; i < 200; i++) {
+	    for (int i = 0; i < 100; i++) {
 
 		timer = interval;
 		Particle p = system.getNewParticle(this, 5000);
@@ -78,8 +78,8 @@ public class ExplodeEmiter implements ParticleEmitter {
 		p.setPosition(x, y);
 		p.setSize(size);
 		float angle = rnd.nextFloat() * 2 * (float) Math.PI;
-		float vx = (float) Math.sin(angle) * 0.4f;
-		float vy = (float) Math.cos(angle) * 0.4f;
+		float vx = (float) Math.sin(angle) * 0.2f;
+		float vy = (float) Math.cos(angle) * 0.2f;
 		p.setVelocity(vx, vy, 1.1f);
 		particlesCreated = true;
 	    }
@@ -94,7 +94,7 @@ public class ExplodeEmiter implements ParticleEmitter {
 	//if (particle.getSize() > 0)
 	//  particle.adjustSize(-0.06f * delta * (size / 40.0f));
 
-	particle.adjustSize(-0.19f * delta);
+	particle.adjustSize(-0.12f * delta);
 	float dxadj = (float) (rnd.nextGaussian()) * 0.05f;
 
 	float dyadj = (float) (rnd.nextGaussian()) * 0.05f;

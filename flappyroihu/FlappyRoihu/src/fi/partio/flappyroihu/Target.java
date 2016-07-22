@@ -1,7 +1,11 @@
 package fi.partio.flappyroihu;
 
+import java.util.List;
+
 import org.newdawn.slick.Graphics;
-import org.newdawn.slick.geom.Rectangle;
+import org.newdawn.slick.Image;
+import org.newdawn.slick.SlickException;
+import org.newdawn.slick.geom.Ellipse;
 import org.newdawn.slick.geom.Shape;
 
 /**
@@ -17,8 +21,16 @@ public class Target {
     private float size;
     private float xLoc;
     private Shape shape;
+    private boolean passed;
     private boolean checkDone;
     public float darkerFactor = 0.4f;
+    private Image targetImage;
+
+    private static int X_DELTA = 55;
+    private static int Y_DELTA = 100;
+    private float alphaDecay = 0.02f;
+
+    List<Object> shapeOrder = FlappyRoihu.CONFIG.getList("target.shapeOrder");
 
     /**
      * @param player
@@ -32,8 +44,18 @@ public class Target {
 	size = FlappyRoihu.HEIGHT / 5;
 	checkDone = false;
 
+	try {
+	    this.targetImage = new Image("/assets/gates/" + player.getName().toLowerCase() + "_" + shapeOrder.get(player.getNumber() - 1) + ".png");
+	} catch (SlickException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	}
+
 	this.xLoc = xLoc;
-	shape = new Rectangle(xLoc, FlappyRoihu.HEIGHT - height, FlappyRoihu.WIDTH / 30, getSize());
+	this.passed = false;
+
+	shape = new Ellipse(xLoc + X_DELTA, FlappyRoihu.HEIGHT - height + Y_DELTA, 116 / 2, 200 / 2);
+	//shape = new Rectangle(xLoc, FlappyRoihu.HEIGHT - height, FlappyRoihu.WIDTH / 30, getSize());
     }
 
     /**
@@ -48,9 +70,12 @@ public class Target {
 	    return;
 	*/
 
-	shape.setCenterX(xLoc);
+	shape.setCenterX(xLoc + X_DELTA);
 	g.setColor(player.getColor().darker(darkerFactor));
-	g.fill(shape);
+	g.draw(shape);
+
+	targetImage.draw(xLoc, FlappyRoihu.HEIGHT - height);
+
     }
 
     /**
@@ -74,10 +99,16 @@ public class Target {
 	    else if (!player.isDead())
 		passGate();
 	}
+
+	if (passed) {
+	    targetImage.setAlpha(targetImage.getAlpha() - alphaDecay);
+	}
+
     }
 
     public void passGate() {
 	darkerFactor = -0.4f;
+	passed = true;
     }
 
     /**

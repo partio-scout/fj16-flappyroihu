@@ -111,6 +111,10 @@ public class Player {
 
     }
 
+    public String getName() {
+	return this.playerName;
+    }
+
     public void draw(Graphics g) {
 
 	// if player has been dead for over 200 frames, he is history!
@@ -249,6 +253,10 @@ public class Player {
      */
     public Shape getShape() {
 	return shape;
+    }
+
+    public int getNumber() {
+	return number;
     }
 
     /**

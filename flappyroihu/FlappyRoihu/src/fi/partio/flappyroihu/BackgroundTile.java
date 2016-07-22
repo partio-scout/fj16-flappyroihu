@@ -12,9 +12,10 @@ public class BackgroundTile {
     private static int tileWidth = FlappyRoihu.CONFIG.getInt("background.tileWidth");
     private static int screenWidth = FlappyRoihu.CONFIG.getInt("screen.width");
     private String bgTileset = FlappyRoihu.CONFIG.getString("background.tileset");
+    private String bgTilesetFormat = FlappyRoihu.CONFIG.getString("background.tileFileType");
 
     public BackgroundTile(int tileId, int xLoc) throws SlickException {
-	this.tileImage = new Image("assets/" + bgTileset + "/tile_" + (tileId < 10 ? "0" : "") + tileId + ".png").getScaledCopy(tileWidth, tileHeight);
+	this.tileImage = new Image("assets/" + bgTileset + "/tile_" + (tileId < 10 ? "0" : "") + tileId + "." + bgTilesetFormat).getScaledCopy(tileWidth, tileHeight);
 	this.xLoc = xLoc;
     }
 
