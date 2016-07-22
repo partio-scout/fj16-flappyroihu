@@ -32,7 +32,7 @@ public class FlappyRoihu extends BasicGame {
     /**
      * Relative speed by which player moves up and down. Descending speed is slower than ascending
      */
-    public static float PLAYER_SPEED = 0.1f;
+    public static float PLAYER_SPEED = CONFIG.getFloat("player.speed");
 
     /**
      * Relative speed by which targets (gates) move towards the player.
@@ -57,6 +57,7 @@ public class FlappyRoihu extends BasicGame {
     private Vector<Player> players;
     private Vector<Target> targets;
     private Background background;
+    private StartSplash splashScreen;
 
     /**
      * Constructs the main object. Calls super to give title to the window
@@ -98,9 +99,9 @@ public class FlappyRoihu extends BasicGame {
 	players = new Vector<>();
 
 	if (playerNames.size() == 3) {
-	    players.add(new Player(playerNames.get(0) + "", 1, CONFIG.getInt("player.pos1"), 200, Input.KEY_LSHIFT));
-	    players.add(new Player(playerNames.get(1) + "", 2, CONFIG.getInt("player.pos2"), 100, Input.KEY_SPACE));
-	    players.add(new Player(playerNames.get(2) + "", 3, CONFIG.getInt("player.pos3"), 300, Input.KEY_RSHIFT));
+	    players.add(new Player(playerNames.get(0) + "", 1, CONFIG.getInt("player.pos1"), 400, Input.KEY_LSHIFT));
+	    players.add(new Player(playerNames.get(1) + "", 2, CONFIG.getInt("player.pos2"), 300, Input.KEY_SPACE));
+	    players.add(new Player(playerNames.get(2) + "", 3, CONFIG.getInt("player.pos3"), 500, Input.KEY_RSHIFT));
 	} else if (playerNames.size() == 2) {
 	    players.add(new Player(playerNames.get(0) + "", 1, CONFIG.getInt("player.pos1"), 200, Input.KEY_LSHIFT));
 	    players.add(new Player(playerNames.get(1) + "", 3, CONFIG.getInt("player.pos2"), 500, Input.KEY_RSHIFT));
@@ -113,6 +114,9 @@ public class FlappyRoihu extends BasicGame {
 	targets = new Vector<>();
 	//targets.add(new Target(players.get(0), 300, 700));
 	addTargets(1200);
+
+	splashScreen = new StartSplash();
+
     }
 
     @Override
@@ -120,6 +124,12 @@ public class FlappyRoihu extends BasicGame {
      * Renders all targets and players and background
      */
     public void render(GameContainer container, Graphics g) {
+
+	if (!started) {
+	    splashScreen.draw(g);
+	    return;
+	}
+
 	//background.draw(bgrX, bgrY, 2000 * 1.4f, 1325 * 1.4f);
 	//background.draw(bgrX + 2000 * 1.3f + WIDTH, bgrY, -2000 * 1.3f, 1325 * 1.3f);
 
@@ -140,8 +150,13 @@ public class FlappyRoihu extends BasicGame {
      */
     public void update(GameContainer container, int delta) throws SlickException {
 
-	if (!started)
+	if (!started) {
+	    splashScreen.update(delta);
+	    if (splashScreen.isReady())
+		started = true;
 	    return;
+	}
+
 	// TODO Auto-generated method stub
 	bgrX -= TARGET_SPEED * 0.2;
 	for (Player p : players)

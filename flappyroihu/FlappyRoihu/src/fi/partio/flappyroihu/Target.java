@@ -72,7 +72,7 @@ public class Target {
 
 	shape.setCenterX(xLoc + X_DELTA);
 	g.setColor(player.getColor().darker(darkerFactor));
-	g.draw(shape);
+	//g.draw(shape);
 
 	targetImage.draw(xLoc, FlappyRoihu.HEIGHT - height);
 
@@ -92,7 +92,7 @@ public class Target {
 
 	xLoc -= FlappyRoihu.TARGET_SPEED * delta;
 
-	if (xLoc < player.getXLoc() && !checkDone) {
+	if (xLoc < player.getXLoc() - 60 && !checkDone) {
 	    checkDone = true;
 	    if (!player.getShape().intersects(shape))
 		player.die();

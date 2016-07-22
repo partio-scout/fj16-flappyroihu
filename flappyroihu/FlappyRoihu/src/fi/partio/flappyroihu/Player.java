@@ -59,7 +59,7 @@ public class Player {
 	this.playerName = subCamp;
 	this.xLoc = xLoc;
 	this.height = height;
-	this.descending = false;
+	this.descending = true;
 	this.color = getColorForSubcamp(subCamp, false);
 	this.nameFontColor = getColorForSubcamp(subCamp, true);
 	this.key = key;
