@@ -58,6 +58,11 @@ public class FlappyRoihu extends BasicGame {
     private Vector<Target> targets;
     private Background background;
     private StartSplash splashScreen;
+    private Vector<Player> deadOrder;
+    private boolean endGame;
+    private boolean winnerWhenOneLeft = CONFIG.getBoolean("game.winnerWhenOneLeft");
+    private EndGameScreen endGameScreen;
+    private Player winner;
 
     /**
      * Constructs the main object. Calls super to give title to the window
@@ -96,17 +101,19 @@ public class FlappyRoihu extends BasicGame {
 
 	List<Object> playerNames = CONFIG.getList("game.players");
 
+	deadOrder = new Vector<>();
 	players = new Vector<>();
+	endGame = false;
 
 	if (playerNames.size() == 3) {
-	    players.add(new Player(playerNames.get(0) + "", 1, CONFIG.getInt("player.pos1"), 400, Input.KEY_LSHIFT));
-	    players.add(new Player(playerNames.get(1) + "", 2, CONFIG.getInt("player.pos2"), 300, Input.KEY_SPACE));
-	    players.add(new Player(playerNames.get(2) + "", 3, CONFIG.getInt("player.pos3"), 500, Input.KEY_RSHIFT));
+	    players.add(new Player(playerNames.get(0) + "", 1, CONFIG.getInt("player.pos1"), 400, Input.KEY_LSHIFT, this));
+	    players.add(new Player(playerNames.get(1) + "", 2, CONFIG.getInt("player.pos2"), 300, Input.KEY_SPACE, this));
+	    players.add(new Player(playerNames.get(2) + "", 3, CONFIG.getInt("player.pos3"), 500, Input.KEY_RSHIFT, this));
 	} else if (playerNames.size() == 2) {
-	    players.add(new Player(playerNames.get(0) + "", 1, CONFIG.getInt("player.pos1"), 200, Input.KEY_LSHIFT));
-	    players.add(new Player(playerNames.get(1) + "", 3, CONFIG.getInt("player.pos2"), 500, Input.KEY_RSHIFT));
+	    players.add(new Player(playerNames.get(0) + "", 1, CONFIG.getInt("player.pos1"), 200, Input.KEY_LSHIFT, this));
+	    players.add(new Player(playerNames.get(1) + "", 3, CONFIG.getInt("player.pos3"), 500, Input.KEY_RSHIFT, this));
 	} else if (playerNames.size() == 1) {
-	    players.add(new Player(playerNames.get(0) + "", 1, CONFIG.getInt("player.pos1"), 200, Input.KEY_LSHIFT));
+	    players.add(new Player(playerNames.get(0) + "", 1, CONFIG.getInt("player.pos1"), 200, Input.KEY_LSHIFT, this));
 	}
 
 	for (Player p : players)
@@ -130,6 +137,14 @@ public class FlappyRoihu extends BasicGame {
 	    return;
 	}
 
+	if (endGame) {
+	    if (endGameScreen.isShowWinnerState()) {
+		endGameScreen.draw(g);
+		return;
+	    }
+
+	}
+
 	//background.draw(bgrX, bgrY, 2000 * 1.4f, 1325 * 1.4f);
 	//background.draw(bgrX + 2000 * 1.3f + WIDTH, bgrY, -2000 * 1.3f, 1325 * 1.3f);
 
@@ -142,6 +157,9 @@ public class FlappyRoihu extends BasicGame {
 	    players.get(i - 1).draw(g);
 	if (!started)
 	    g.drawString("PAUSED! PRESS ENTER TO START (P to pause again)", WIDTH / 3, HEIGHT / 2);
+
+	if (endGame)
+	    endGameScreen.draw(g);
     }
 
     @Override
@@ -155,6 +173,12 @@ public class FlappyRoihu extends BasicGame {
 	    if (splashScreen.isReady())
 		started = true;
 	    return;
+	}
+
+	if (endGame) {
+	    endGameScreen.update(delta);
+	    if (endGameScreen.isShowWinnerState())
+		return;
 	}
 
 	// TODO Auto-generated method stub
@@ -257,6 +281,26 @@ public class FlappyRoihu extends BasicGame {
 	    ar[i] = a;
 	}
 	return ar;
+    }
+
+    public void playerDies(Player player) {
+	if (endGame)
+	    return;
+
+	deadOrder.addElement(player);
+	if ((winnerWhenOneLeft && deadOrder.size() == players.size() + 1) ||
+		(winnerWhenOneLeft && deadOrder.size() == players.size())) {
+	    // if there is someone alive at this point, he is the winner
+	    for (Player p : players)
+		if (!p.isDead())
+		    winner = p;
+
+	    // if not, winner is whoever died the last
+	    if (winner == null)
+		winner = player;
+	    endGameScreen = new EndGameScreen(winner);
+	    endGame = true;
+	}
     }
 
 }

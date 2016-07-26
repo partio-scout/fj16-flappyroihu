@@ -48,6 +48,10 @@ public class Player {
     private Image arrowImage;
     private Image gateImage;
 
+    private FlappyRoihu master;
+
+    List<Object> shapeOrder = FlappyRoihu.CONFIG.getList("target.shapeOrder");
+
     /**
      * Creates and initializes new player objet
      * @param col Player color
@@ -55,7 +59,7 @@ public class Player {
      * @param height Starting height (yLoc of the player)
      * @param key Key that is binded to this player
      */
-    public Player(String subCamp, int number, float xLoc, float height, int key) {
+    public Player(String subCamp, int number, float xLoc, float height, int key, FlappyRoihu master) {
 	this.playerName = subCamp;
 	this.xLoc = xLoc;
 	this.height = height;
@@ -64,6 +68,7 @@ public class Player {
 	this.nameFontColor = getColorForSubcamp(subCamp, true);
 	this.key = key;
 	this.number = number;
+	this.master = master;
 	beenDeadCount = 0;
 	size = 75;
 	dead = false;
@@ -78,6 +83,8 @@ public class Player {
 
 	    if (number == 2)
 		arrowImage.rotate(180);
+
+	    this.gateImage = (new Image("assets/" + shapeOrder.get(getNumber() - 1) + ".png")).getScaledCopy(0.6f);
 
 	} catch (SlickException e) {
 	    // TODO Auto-generated catch block
@@ -144,6 +151,8 @@ public class Player {
 	g.setColor(nameFontColor);
 	g.drawString(playerName, boxX + 60, boxY + 6);
 	g.drawImage(arrowImage, boxX + 20, boxY + 4);
+
+	g.drawImage(gateImage, boxX + nameBoxWidth - 65, boxY + 5);
 
     }
 
@@ -224,6 +233,7 @@ public class Player {
     public void die() {
 	dead = true;
 	explode();
+	master.playerDies(this);
     }
 
     public void explode() {

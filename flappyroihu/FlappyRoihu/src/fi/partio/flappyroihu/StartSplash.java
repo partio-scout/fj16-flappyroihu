@@ -21,8 +21,10 @@ public class StartSplash {
 
     private long waitStartTime;
 
+    private String splashScreenFontnName = FlappyRoihu.CONFIG.getString("splashscreen.font");
+
     float alpha = 1;
-    float splashAlphaDecay = 0.015f;
+    float splashAlphaDecay = 0.005f;
 
     boolean isReady;
 
@@ -56,10 +58,11 @@ public class StartSplash {
 	}
 
 	if (state == STATE_NAMES_ON_SCREEN) {
+
 	    splashScreenBg.draw(0, 0);
 	    g.setFont(new TrueTypeFont(
 		    new java.awt.Font(
-			    "Arial",
+			    splashScreenFontnName,
 			    java.awt.Font.BOLD,
 			    50),
 		    true));

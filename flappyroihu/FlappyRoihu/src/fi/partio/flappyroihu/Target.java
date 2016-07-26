@@ -64,11 +64,9 @@ public class Target {
      */
     public void draw(Graphics g) {
 
-	/*
 	// If corresponding player is already dead, don't bother to draw
 	if (player.isDead())
 	    return;
-	*/
 
 	shape.setCenterX(xLoc + X_DELTA);
 	g.setColor(player.getColor().darker(darkerFactor));
@@ -92,7 +90,7 @@ public class Target {
 
 	xLoc -= FlappyRoihu.TARGET_SPEED * delta;
 
-	if (xLoc < player.getXLoc() - 60 && !checkDone) {
+	if (xLoc < player.getXLoc() && !checkDone) {
 	    checkDone = true;
 	    if (!player.getShape().intersects(shape))
 		player.die();
