@@ -2,6 +2,8 @@ package fi.partio.flappyroihu;
 
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Image;
+import org.newdawn.slick.SlickException;
 import org.newdawn.slick.TrueTypeFont;
 import org.newdawn.slick.geom.Rectangle;
 
@@ -14,9 +16,16 @@ public class EndGameScreen {
     float alpha = 0;
     boolean showWinner;
     Rectangle fadeRect;
+    Image logoImg;
 
     public EndGameScreen(Player winner) {
 	this.winner = winner;
+	try {
+	    logoImg = new Image("assets/logos/" + winner.getName().toLowerCase() + ".png");
+	} catch (SlickException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	}
     }
 
     public void update(int delta) {
@@ -46,7 +55,8 @@ public class EndGameScreen {
 			    50),
 		    true));
 	    g.setColor(Color.white);
-	    g.drawString("Winner: " + winner.getName(), 200, 300);
+	    g.drawString("Winner: " + winner.getName(), 450, 80);
+	    logoImg.draw(450, 200);
 	}
 
     }

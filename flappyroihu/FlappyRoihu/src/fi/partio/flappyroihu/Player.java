@@ -7,6 +7,7 @@ import org.newdawn.slick.Font;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.Sound;
 import org.newdawn.slick.TrueTypeFont;
 import org.newdawn.slick.geom.Circle;
 import org.newdawn.slick.geom.Shape;
@@ -50,6 +51,8 @@ public class Player {
 
     private FlappyRoihu master;
 
+    private Sound deathSound;
+
     List<Object> shapeOrder = FlappyRoihu.CONFIG.getList("target.shapeOrder");
 
     /**
@@ -85,6 +88,8 @@ public class Player {
 		arrowImage.rotate(180);
 
 	    this.gateImage = (new Image("assets/" + shapeOrder.get(getNumber() - 1) + ".png")).getScaledCopy(0.6f);
+
+	    deathSound = new Sound("assets/sounds/death.wav");
 
 	} catch (SlickException e) {
 	    // TODO Auto-generated catch block
@@ -231,9 +236,12 @@ public class Player {
      * Sets player dead. Plays relevant animation and then stops updating player after a while
      */
     public void die() {
+	if (dead)
+	    return; // cannot die again
 	dead = true;
 	explode();
 	master.playerDies(this);
+	deathSound.play();
     }
 
     public void explode() {

@@ -205,6 +205,9 @@ public class FlappyRoihu extends BasicGame {
 	    p.keyPressed(key);
 
 	if (key == Input.KEY_ENTER)
+	    splashScreen.keyPressed();
+
+	if (key == Input.KEY_S)
 	    started = true;
 
 	if (key == Input.KEY_ESCAPE)
@@ -288,7 +291,7 @@ public class FlappyRoihu extends BasicGame {
 	    return;
 
 	deadOrder.addElement(player);
-	if ((winnerWhenOneLeft && deadOrder.size() == players.size() + 1) ||
+	if ((winnerWhenOneLeft && deadOrder.size() == players.size() - 1) ||
 		(winnerWhenOneLeft && deadOrder.size() == players.size())) {
 	    // if there is someone alive at this point, he is the winner
 	    for (Player p : players)

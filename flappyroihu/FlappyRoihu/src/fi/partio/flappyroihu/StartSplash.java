@@ -24,9 +24,10 @@ public class StartSplash {
     private String splashScreenFontnName = FlappyRoihu.CONFIG.getString("splashscreen.font");
 
     float alpha = 1;
-    float splashAlphaDecay = 0.005f;
-
+    float splashAlphaDecay = 0.01f;
+    private boolean keyPressed;
     boolean isReady;
+    boolean showPressEnter = FlappyRoihu.CONFIG.getBoolean("splashscreen.showPressEnter");
 
     List<Object> playerNames = FlappyRoihu.CONFIG.getList("game.players");
     Image[] targetImages;
@@ -45,16 +46,34 @@ public class StartSplash {
 		targetImages[i] = new Image("/assets/gates/" + playerNames.get(i).toString().toLowerCase() + "_" + shapeOrder.get(i) + ".png");
 	    }
 
+	    keyPressed = false;
+
 	} catch (SlickException e) {
 	    // TODO Auto-generated catch block
 	    e.printStackTrace();
 	}
     }
 
+    public void keyPressed() {
+	keyPressed = true;
+    }
+
     public void draw(Graphics g) {
 	if (state == STATE_SPLASH_FADING_OUT) {
 	    splashScreenBg.draw(0, 0);
 	    splashScreen.draw(0, 0);
+	    g.setColor(new Color(1, 1, 1, splashScreen.getAlpha()));
+	    g.setFont(new TrueTypeFont(
+		    new java.awt.Font(
+			    splashScreenFontnName,
+			    java.awt.Font.BOLD,
+			    20),
+		    true));
+
+	    g.drawString("Code: Arttu Tanner", 60, 600);
+	    g.drawString("Art: Olli Haataja", 60, 630);
+	    if (showPressEnter)
+		g.drawString("[Press Enter]", 1100, 630);
 	}
 
 	if (state == STATE_NAMES_ON_SCREEN) {
@@ -77,27 +96,44 @@ public class StartSplash {
 		y += 220;
 	    }
 
+	    if (showPressEnter) {
+		g.setColor(new Color(1, 1, 1, splashScreen.getAlpha()));
+		g.setFont(new TrueTypeFont(
+			new java.awt.Font(
+				splashScreenFontnName,
+				java.awt.Font.BOLD,
+				20),
+			true));
+		g.drawString("[Press Enter]", 1100, 630);
+	    }
+
 	}
 
     }
 
     public void update(int delta) {
+
+	if (!keyPressed)
+	    return;
+
 	if (state == STATE_SPLASH_FADING_OUT) {
 	    splashScreen.setAlpha(splashScreen.getAlpha() - splashAlphaDecay);
 	    if (splashScreen.getAlpha() < 0.01) {
 		state = STATE_NAMES_ON_SCREEN;
 		waitStartTime = System.currentTimeMillis();
+
 	    }
 
 	}
 
 	if (state == STATE_NAMES_ON_SCREEN) {
 
-	    if (System.currentTimeMillis() - waitStartTime > 5000) {
+	    if (System.currentTimeMillis() - waitStartTime > 1000 && keyPressed) {
 		STATE_ALL_DONE = 99;
 		isReady = true;
-		System.out.println("Waiting done!!");
+
 	    }
+	    keyPressed = false;
 	}
 
     }

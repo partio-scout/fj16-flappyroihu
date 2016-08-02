@@ -5,6 +5,7 @@ import java.util.List;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.Sound;
 import org.newdawn.slick.geom.Ellipse;
 import org.newdawn.slick.geom.Shape;
 
@@ -26,6 +27,8 @@ public class Target {
     public float darkerFactor = 0.4f;
     private Image targetImage;
 
+    private Sound passSound;
+
     private static int X_DELTA = 55;
     private static int Y_DELTA = 100;
     private float alphaDecay = 0.02f;
@@ -46,6 +49,7 @@ public class Target {
 
 	try {
 	    this.targetImage = new Image("/assets/gates/" + player.getName().toLowerCase() + "_" + shapeOrder.get(player.getNumber() - 1) + ".png");
+	    passSound = new Sound("assets/sounds/pop_" + player.getNumber() + ".wav");
 	} catch (SlickException e) {
 	    // TODO Auto-generated catch block
 	    e.printStackTrace();
@@ -107,6 +111,7 @@ public class Target {
     public void passGate() {
 	darkerFactor = -0.4f;
 	passed = true;
+	passSound.play();
     }
 
     /**
